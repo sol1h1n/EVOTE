@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voting System</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.3.4/web3.min.js"></script>
+</head>
+<body>
+    <h1>Voting System</h1>
+    <div id="adminPanel">
+        <h2>Admin Panel</h2>
+        <input type="text" id="newCandidate" placeholder="Candidate Name">
+        <button onclick="addCandidate()">Add Candidate</button>
+        <button onclick="startVote()">Start Vote</button>
+        <button onclick="endVote()">End Vote</button>
+    </div>
+    <div id="voterPanel">
+        <h2>Vote Here</h2>
+        <input type="text" id="candidateToVote" placeholder="Candidate Name">
+        <button onclick="voteForCandidate()">Vote</button>
+    </div>
+    <div id="results">
+        <h2>Vote Counts</h2>
+        <button onclick="fetchResults()">Get Results</button>
+        <div id="resultsDisplay"></div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
