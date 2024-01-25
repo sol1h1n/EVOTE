@@ -1,49 +1,28 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity >=0.5.0 <0.9.0;
 
 contract Voting {
-    address public admin;
-    bool public voteStarted;
-    mapping(address => bool) public hasVoted;
-    mapping(string => uint) public votesReceived;
-    string[] public candidateList;
+    mapping(address => bool) public hasVoted; // Tracks whether an address has voted
+    mapping(uint => uint) public voteCount;   // Tracks the number of votes for each candidate
+    uint public constant NUM_CANDIDATES = 4;  // Total number of candidates
 
-    modifier onlyAdmin() {
-        require(msg.sender == admin, "Only admin can call this function.");
-        _;
+    event Voted(address indexed voter, uint indexed candidateId); // Event emitted after a vote
+
+    // Function to cast a vote
+    function vote(uint candidateId) public {
+        require(candidateId < NUM_CANDIDATES, "Invalid candidate ID."); // Check for valid candidate
+        require(!hasVoted[msg.sender], "You have already voted."); // Ensure the voter hasn't voted before
+
+        hasVoted[msg.sender] = true; // Mark the voter as having voted
+        voteCount[candidateId]++; // Increment the vote count for the candidate
+
+        emit Voted(msg.sender, candidateId); // Emit the voting event
     }
 
-    constructor() {
-        admin = msg.sender; // Set the contract deployer as the admin
-        voteStarted = false;
-    }
-
-    function changeAdmin(address newAdmin) public onlyAdmin {
-        admin = newAdmin;
-    }
-
-    function addCandidate(string memory name) public onlyAdmin {
-        candidateList.push(name);
-        votesReceived[name] = 0;
-    }
-
-    function startVote() public onlyAdmin {
-        voteStarted = true;
-    }
-
-    function endVote() public onlyAdmin {
-        voteStarted = false;
-    }
-
-    function vote(string memory candidate) public {
-        require(voteStarted, "Voting is not started yet.");
-        require(!hasVoted[msg.sender], "You have already voted.");
-        require(votesReceived[candidate] > 0, "Not a valid candidate.");
-        votesReceived[candidate]++;
-        hasVoted[msg.sender] = true;
-    }
-
-    function voteCount(string memory candidate) public view returns (uint) {
-        return votesReceived[candidate];
+    // Function to retrieve the total vote count for each candidate
+    function getVoteCounts() public view returns (uint[NUM_CANDIDATES] memory counts) {
+        for (uint i = 0; i < NUM_CANDIDATES; i++) {
+            counts[i] = voteCount[i];
+        }
     }
 }
